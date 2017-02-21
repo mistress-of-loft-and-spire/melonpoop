@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project>
+	<meta title="🍉💩" package="" version="1.0.0" company="voec" />
+
+	<!-- output -->
+ 	<app file="" main="Main" path="bin" />
+
+	<window fps="60" background="0xc6ffed" />
+	<window width="960" height="540" resizable="true" unless="mobile" />
+	<window fullscreen="true" if="mobile" />
+	<window orientation="landscape" vsync="true" antialiasing="0" if="cpp" />
+
+	<source path="src" />
+
+	<!-- classpath, haxe libs -->
+	<haxelib name="HaxePunk" />
+
+	<!-- assets -->
+	<assets path="assets/gfx" rename="gfx" include="*.png|*.jpg" />
+	<assets path="assets/sfx" rename="sfx" include="*.mp3" if="flash" />
+	<assets path="assets/sfx" rename="sfx" include="*.wav|*.ogg" unless="flash" />
+	<assets path="assets/fnt" rename="fnt" include="*.ttf|*.otf" />
+
+	<icon path="assets/HaxePunk.svg" />
+</project>
