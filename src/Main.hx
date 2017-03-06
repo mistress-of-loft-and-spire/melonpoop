@@ -3,6 +3,7 @@ import com.haxepunk.debug.Console.TraceCapture;
 import com.haxepunk.Engine;
 import com.haxepunk.HXP;
 import com.haxepunk.utils.Input;
+import com.haxepunk.utils.Joystick;
 import com.haxepunk.utils.Key;
 import openfl.Lib;
 
@@ -17,7 +18,7 @@ class Main extends Engine
 		trace(HXP.VERSION);
 #end
 		
-		HXP.volume = 0.1;
+		//HXP.volume = 0.1;
 		
 		HXP.screen.color = 0xcaf8f2;
 		

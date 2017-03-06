@@ -45,7 +45,7 @@ class Endsnake extends Entity
 	var eyes:Spritemap = new Spritemap("gfx/snake.png", 56, 56);
 	var	endsnake:Image = new Image("gfx/endsnake_rest.png");
 	
-	var like:Image = new Image("gfx/likemelon" + (HXP.rand(10)+1) + ".png");
+	var like:Image = new Image("gfx/likemelon" + (HXP.rand(11)+1) + ".png");
 	
 	var state:Int = 0;
 	

@@ -39,28 +39,11 @@ class Music extends Entity
 
 	public function play(sound:Sfx):Void
 	{
-		if (main.playing)
-		{
-			main.stop();
-        }
-		if (ending.playing)
-		{
-			ending.stop();
-        }
 		sound.play(0);
 	}
 
 	public function loop(sound:Sfx):Void
     {
-		if (main.playing)
-		{
-			main.stop();
-        }
-		if (ending.playing)
-		{
-			ending.stop();
-        }
-		
 		sound.loop(0);
 	}
 
@@ -76,18 +59,26 @@ class Music extends Entity
 		{
 			main.volume += 0.01 * MainScene.elapsed;
 		}
-		if (ending.playing && ending.volume < 0.8 && fadeout != "ending")
+		if (ending.playing && ending.volume < 0.6 && fadeout != "ending")
 		{
 			ending.volume += 0.01 * MainScene.elapsed;
         }
 		
-		if (fadeout == "main" && main.volume > 0)
+		if (fadeout == "main")
 		{
-			main.volume -= 0.002 * MainScene.elapsed;
+			if (main.volume > 0)
+			{
+				main.volume -= 0.005 * MainScene.elapsed;
+			}
+			else main.stop();
         }
-        if (fadeout == "ending" && ending.volume > 0)
+        if (fadeout == "ending")
 		{
+			if (ending.volume > 0)
+			{
 			ending.volume -= 0.01 * MainScene.elapsed;
+			}
+			else ending.stop();
         }
 		
 		super.update();

@@ -64,7 +64,7 @@ class Plus extends Entity
 	{
 		sprite.angle= sprite.angle+ 0.4;
 		
-		if (icon == "hot")
+		if (icon == "hot" || icon == "clock")
 		{
 			sprite.angle= sprite.angle+ 0.4;
         }
@@ -79,7 +79,7 @@ class Plus extends Entity
 	
 	private function delete(e:Dynamic = null):Void
     {
-		if (icon == "hot")
+		if (icon == "hot" || icon == "clock")
 		{
 			var tween2:VarTween = new VarTween(fin,TweenType.OneShot);
 			tween2.tween(sprite,"scale",0,3,Ease.expoIn);

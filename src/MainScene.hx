@@ -7,7 +7,9 @@ import com.haxepunk.graphics.BitmapText;
 import com.haxepunk.graphics.Image;
 import com.haxepunk.utils.Input;
 import com.haxepunk.utils.Key;
+import ent.Dog;
 import ent.Layer;
+import ent.Puff;
 import ent.Seed;
 import ent.Snake;
 import ent.Spawn;
@@ -20,6 +22,7 @@ import ent.EmojiBubble;
 import screen.Icon;
 import screen.Kaleido;
 import screen.Lost;
+import screen.Plus;
 import screen.PressA;
 import screen.Sky;
 import util.Music;
@@ -27,7 +30,7 @@ import util.Music;
 class MainScene extends Scene
 {
 	
-	public static var rotationAngle:Float = 0;
+	public static var rotationAngle:Float = HXP.rand(180);
 	
 	public static var seeds:Array<Seed>;
 	public static var melonSlice:Array<Layer>;
@@ -56,7 +59,7 @@ class MainScene extends Scene
 		
 		add(music);
 		
-		music.play(music.main);
+		music.loop(music.main);
 		
 		//--------
 		
@@ -96,6 +99,8 @@ class MainScene extends Scene
 		intro = true;
 		angleChange = 0;
 		camZoom = 0;
+		timer = 0;
+		dogtime = false;
 		
 		lost = false;
 		
@@ -112,11 +117,13 @@ class MainScene extends Scene
 	public static var meanZ:Float = 0;
 	
 	public static var bubble:EmojiBubble = null;
+	public static var bubble2:EmojiBubble = null;
 	
 	var ico1:Icon;
 	var ico2:Icon;
 	
 	public static var elapsed:Float = 0;
+	var timer:Float = 0;
 	
 	public static var snakeColor:Int = 0x84dddd;
 	
@@ -126,6 +133,9 @@ class MainScene extends Scene
 	public static var player:Int = 1;
 	public static var control1:Int = 1;
 	public static var control2:Int = -1;
+	
+	public static var dogtime:Bool = false;
+	var dogtimer:Float = 0;
 	
 	function snakeAlarm(e:Dynamic = null):Void
 	{
@@ -145,20 +155,22 @@ class MainScene extends Scene
 			angleChange += 0.02;
 			
 			if (Input.joystick(0).pressed() || Input.joystick(1).pressed() || Input.pressed(Key.SPACE) || Input.pressed(Key.ENTER) || Input.pressed(Key.F) || Input.pressed(Key.A))
-		{
+			{
 				ico1.delete();
 				ico2.delete();
 				
 				intro = false;
-				camZoom = 0.8;
+				camZoom = 0.7;
 				
-				seeds.push(new Seed((Math.random() * 120) - 60, (Math.random() * 120) - 60,0,false,control1));
+				seeds.push(new Seed((Math.random() * 120) - 60, (Math.random() * 120) - 60,-30,false,control1));
 				add(MainScene.seeds[0]);
+				add(new Puff(MainScene.seeds[0].p.x, MainScene.seeds[0].p.y, MainScene.seeds[0].p.z));
 				
 				if (player == 2)
 				{
-					seeds.push(new Seed((Math.random() * 120) - 60, (Math.random() * 120) - 60,0,false,control2,2));
+					seeds.push(new Seed((Math.random() * 120) - 60, (Math.random() * 120) - 60,-30,false,control2,2));
 					add(MainScene.seeds[1]);
+					add(new Puff(MainScene.seeds[1].p.x, MainScene.seeds[1].p.y, MainScene.seeds[1].p.z));
 				}
 				
 				for (i in 0...3 * player)
@@ -189,53 +201,58 @@ class MainScene extends Scene
 				
 				angleChange += 0.02;
 				
-				if (Input.check(Key.LEFT) || Input.joystick(0).check(4))
-				{
-					angleChange += 0.2;
-            	}
-				if (Input.check(Key.RIGHT) || Input.joystick(0).check(5))
-				{
-					angleChange -= 0.2;
-            	}
-				
-				var axisRX:Float = Input.joystick(0).getAxis(3);
-				var axisRY:Float = Input.joystick(0).getAxis(4);
-				
-				angleChange += 0.2 * axisRX;
+				checkRotate();
 				
 				super.update();
             }
 			else
 			{
-				if ((Input.pressed(Key.SPACE) || Input.pressed(Key.E) || Input.joystick(0).pressed(1) || Input.joystick(0).pressed(3) || Input.joystick(0).pressed(2) || Input.joystick(1).pressed(1) || Input.joystick(1).pressed(3) || Input.joystick(1).pressed(2)) && bubble == null)
+				if(dogtime)
 				{
-					seeds[HXP.rand(MainScene.seeds.length - 1)].addBubble();
-            	}
+					dogtimer -= HXP.elapsed;
+					if (dogtimer <= 0)
+					{
+						add(new Dog((Math.random() * 360) - 180, (Math.random() * 360) - 180));
+						dogtimer += HXP.choose([1, 2, 3]);
+					}
+				}
+				
+				//BUBBLE! -#-#-#-#-#-#-#-#-#-#-
+				if (bubble == null)
+				{
+					if (control1 == 0)
+					{
+						if (Input.pressed(Key.SPACE) || Input.pressed(Key.E)) newBubble(1);
+					}
+					else if (control1 == 1)
+					{
+						if (Input.joystick(0).pressed(1) || Input.joystick(0).pressed(3) || Input.joystick(0).pressed(2)) newBubble(1);
+					}
+					else
+					{
+						if (Input.joystick(1).pressed(1) || Input.joystick(1).pressed(3) || Input.joystick(1).pressed(2)) newBubble(1);
+					}
+				}
+				if (player == 2 && bubble2 == null)
+				{
+					if (control2 == 0)
+					{
+						if (Input.pressed(Key.SPACE) || Input.pressed(Key.E)) newBubble(2);
+					}
+					else if (control2 == 1)
+					{
+						if (Input.joystick(0).pressed(1) || Input.joystick(0).pressed(3) || Input.joystick(0).pressed(2)) newBubble(2);
+					}
+					else
+					{
+						if (Input.joystick(1).pressed(1) || Input.joystick(1).pressed(3) || Input.joystick(1).pressed(2)) newBubble(2);
+					}
+				}
+				
 				
 				super.update();
 				
-				if (Input.check(Key.LEFT) || Input.joystick(0).check(4))
-				{
-					angleChange += 0.2;
-            	}
-				if (Input.check(Key.RIGHT) || Input.joystick(0).check(5))
-				{
-					angleChange -= 0.2;
-            	}
-				if (Input.check(Key.UP))
-				{
-					camZoom += 0.02;
-            	}
-				if (Input.check(Key.DOWN))
-				{
-					camZoom -= 0.02;
-            	}
-				
-				var axisRX:Float = Input.joystick(0).getAxis(3);
-				var axisRY:Float = Input.joystick(0).getAxis(4);
-				
-				angleChange = angleChange + (0.2 * axisRX);
-				camZoom = camZoom - (0.02 * axisRY);
+				checkRotate();
             }
         }
 		
@@ -276,15 +293,79 @@ class MainScene extends Scene
 		Camera3D.camera.z + (((Camera3D.offset.z + offsetAddZ) - Camera3D.camera.z) * 0.05));
 		
 		angleChange *= 0.8;
+		manualChange *= 0.8;
 		
-		if (angleChange > 1.6) { angleChange = 1.6; }
+		HXP.clamp(angleChange, -0.6, 0.6);
+		HXP.clamp(manualChange, -0.3, 0.3);
+		
+		if (Math.abs(angleChange) < 0.04) { angleChange = 0; }
 		
 		
 		rotationAngle += angleChange;
+		if(angleChange == 0) rotationAngle +=  manualChange;
 		
 		if (rotationAngle < 0) rotationAngle += 360;
 		
 		rotationAngle %= 360;
+		
+	}
+	
+	var manualChange:Float = 0;
+	
+	function checkRotate(e:Dynamic = null):Void
+	{
+		
+		if (control1 == 0 || control2 == 0)
+		{
+			if (Input.check(Key.LEFT)) angleChange += 0.2;
+			if (Input.check(Key.A)) manualChange += 0.05;
+			if (Input.check(Key.RIGHT)) angleChange -= 0.2;
+			if (Input.check(Key.D)) manualChange -= 0.05;
+			
+			if (Input.check(Key.UP)) camZoom += 0.01;
+			if (Input.check(Key.DOWN)) camZoom -= 0.01;
+		}
+		if (control1 == 1 || control2 == 1)
+		{
+			if (Input.joystick(0).check(4)) angleChange += 0.2;
+			if (Input.joystick(0).check(5)) angleChange -= 0.2;
+			
+			var axisRX:Float = Input.joystick(0).getAxis(3);
+			var axisRY:Float = Input.joystick(0).getAxis(4);
+			
+			var axisLX:Float = Input.joystick(0).getAxis(0);
+			
+			angleChange += 0.2 * axisRX;
+			manualChange += 0.05 * axisLX;
+			camZoom = camZoom - (0.01 * axisRY);
+		}
+		if (control1 == 2 || control2 == 2)
+		{
+			if (Input.joystick(1).check(4)) angleChange += 0.2;
+			if (Input.joystick(1).check(5)) angleChange -= 0.2;
+			
+			var axisRX2:Float = Input.joystick(1).getAxis(3);
+			var axisRY2:Float = Input.joystick(1).getAxis(4);
+			
+			var axisLX2:Float = Input.joystick(1).getAxis(0);
+			
+			angleChange += 0.2 * axisRX2;
+			manualChange += 0.05 * axisLX2;
+			camZoom = camZoom - (0.02 * axisRY2);
+		}
+		
+		
+	}
+	
+	function newBubble(num:Int = 1):Void
+	{
+		var arr:Array<Int> = new Array<Int>();
+		for (i in 0...seeds.length)
+		{
+			if (seeds[i].number == num) arr.push(i);
+		}
+		
+		if(arr.length != 0) seeds[arr[HXP.rand(arr.length - 1)]].addBubble();
 		
 	}
 

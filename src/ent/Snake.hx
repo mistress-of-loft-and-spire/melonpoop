@@ -80,6 +80,7 @@ class Snake extends Entity3D
 	public var layerZ:Int = 0;
 	
 	var speed:Float = 2;
+	//var speed:Float = 0.7;
 	var direction:Float = 0;
 	
 	var timer2:Float = 0;
@@ -112,7 +113,7 @@ class Snake extends Entity3D
 		//MOVEMENT
 		p.x += Math.cos(direction * (Math.PI / - 180)) * speed * MainScene.elapsed;
 		p.y += Math.sin(direction * (Math.PI / - 180)) * speed * MainScene.elapsed;
-
+		
 		head.angle = eyes.angle = (direction + 90) + MainScene.rotationAngle;
 		
 		//BORDER CLAMP
@@ -125,12 +126,19 @@ class Snake extends Entity3D
 		
 		fastTimer += HXP.elapsed;
 		
-		if (fastTimer > 50 && fastMode == false)
+		if (fastTimer > 43 && fastMode == false)
 		{
 			train.play(0.6);
 			scene.add(new Plus("hot"));
 			fastMode = true;
 			speed = 3.3;
+		}
+		if (!MainScene.dogtime && fastTimer > 78)
+		{
+			scene.add(new Plus("clock"));
+			MainScene.dogtime = true;
+			var dogi:Sfx = new Sfx("sfx/dogtime.ogg");
+			dogi.play(0.9);
 		}
 		
 		if (timer2 > 5)

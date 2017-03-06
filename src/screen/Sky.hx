@@ -2,6 +2,7 @@ package screen;
 import com.haxepunk.Entity;
 import com.haxepunk.HXP;
 import com.haxepunk.graphics.Image;
+import com.haxepunk.graphics.Spritemap;
 import com.haxepunk.utils.Input;
 import com.haxepunk.utils.Joystick.XBOX_GAMEPAD;
 
@@ -17,7 +18,7 @@ class Sky extends Entity
 	var clouds1:Image = new Image("gfx/clouds.png");
 	var clouds2:Image = new Image("gfx/clouds.png");
 	
-	var bird:Image = new Image("gfx/bird.png");
+	var bird:Spritemap = new Spritemap("gfx/bird.png",100,120);
 	var ballon:Image = new Image("gfx/ballon.png");
 	
 	var isSetup:Bool;
@@ -38,6 +39,9 @@ class Sky extends Entity
 		
 		clouds1.scrollX = clouds2.scrollX = 0.8;
 		
+		bird.add("idle", [0, 1], 2, true);
+		bird.play("idle");
+		
 		addGraphic(clouds1);
 		addGraphic(clouds2);
 		
@@ -45,11 +49,16 @@ class Sky extends Entity
 		{
 			clouds1.alpha = 0.04;
 			clouds2.alpha = 0.04;
+			ballon.alpha = bird.alpha = 0.04;
 		}
 		
 		addGraphic(bird);
+		addGraphic(ballon);
 		
-		bird.y = 30;
+		bird.y = HXP.rand(200);
+		ballon.y = HXP.rand(200);
+		bird.x = HXP.rand(HXP.width);
+		ballon.x = HXP.rand(HXP.width);
 		
 		bird.scrollX = ballon.scrollX = 0.9;
 		
@@ -76,8 +85,12 @@ class Sky extends Entity
 			clouds2.x = clouds1.x + 960;
 		}
 		
+		ballon.x += 0.5;
 		bird.x -= 1;
-		if(bird.x <= -960) bird.x = 960;
+		
+		
+		if (bird.x <= -960) { bird.x = 960; bird.y = HXP.rand(200); }
+		if (ballon.x >= 960) {ballon.x = -960; ballon.y = HXP.rand(200); }
 		
 		super.update();
 		

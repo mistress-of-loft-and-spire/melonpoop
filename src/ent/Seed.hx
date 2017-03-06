@@ -67,6 +67,10 @@ class Seed extends Entity3D
 			MainScene.music.greet.stop();
 			MainScene.music.greet.play();
         }
+		else
+		{
+			fall = true;
+		}
 	}
 	
 	public var number:Int = 1;
@@ -85,7 +89,7 @@ class Seed extends Entity3D
 	var direction:Float = 0;
 	var movement:Point = new Point(0,0);
 	var maxSpeed:Float = 1.2;
-	var walkingSpeed:Float = 0.25;
+	var walkingSpeed:Float = 0.25 + HXP.choose([0.04, -0.04, 0]);
 	
 	public var control:Int = 0;
 
@@ -123,6 +127,26 @@ class Seed extends Entity3D
 		
 		movement.x += flyMovement.x * MainScene.elapsed;
 		movement.y += flyMovement.y * MainScene.elapsed;
+		
+		//SEED SHOVE
+		if (movement.length < 0.3)
+		{
+		for (k in 0...MainScene.seeds.length)
+		{
+			if (MainScene.seeds[k] != this && p.x > MainScene.seeds[k].p.x - 4 && p.x < MainScene.seeds[k].p.x + 4 && p.y > MainScene.seeds[k].p.y - 4 && p.y < MainScene.seeds[k].p.y + 4)
+			{
+				if (MainScene.seeds[k].layerZ == layerZ)
+				{
+					//var shoveMove:Point = new Point(); 
+					//HXP.angleXY(shoveMove, HXP.angle(p.x, p.y, MainScene.seeds[k].p.x, MainScene.seeds[k].p.y), 0.15, 0, 0);
+					movement.x += (Math.random() * walkingSpeed*2)-walkingSpeed;
+					movement.y += (Math.random() * walkingSpeed*2)-walkingSpeed;
+				}
+			}
+		}
+		}
+		
+		
 		
 		layerZ = Math.floor(p.z / 5);
 		
@@ -305,9 +329,20 @@ class Seed extends Entity3D
 		}
 		
 		// TALK BUBBLE
-		if (hasBubble && MainScene.bubble != null)
+		if (hasBubble)
 		{
-			MainScene.bubble.p.setTo(p.x,p.y,p.z);
+			if (MainScene.bubble != null && number == 1)
+			{
+				MainScene.bubble.p.setTo(p.x, p.y, p.z);
+			}
+			else if (MainScene.bubble2 != null && number == 2)
+			{
+				MainScene.bubble2.p.setTo(p.x, p.y, p.z);
+			}
+			else
+			{
+				hasBubble = false;
+			}
         }
 		
 		super.update();
@@ -315,8 +350,17 @@ class Seed extends Entity3D
 
 	public function addBubble(e:Dynamic = null):Void
     {
-		MainScene.bubble = new EmojiBubble(p.x,p.y,p.z);
-		scene.add(MainScene.bubble);
+		if (number == 1) 
+		{
+			MainScene.bubble = new EmojiBubble(p.x,p.y,p.z,1);
+			scene.add(MainScene.bubble);
+		}
+		else
+		{
+			MainScene.bubble2 = new EmojiBubble(p.x,p.y,p.z,2);
+			scene.add(MainScene.bubble2);
+		}
+		
 		hasBubble = true;
 	}
 	

@@ -54,8 +54,12 @@ class EmojiBubble extends Entity3D
 	var s2:Sfx = new Sfx("sfx/talk02.ogg");
 	var s1:Sfx = new Sfx("sfx/talk01.ogg");
 	
-	public function new(x:Float, y:Float, z:Float) 
+	var number:Int;
+	
+	public function new(x:Float, y:Float, z:Float, number:Int = 1) 
 	{
+		
+		this.number = number;
 		
 		//bubble.alpha = 0.8;
 		
@@ -88,6 +92,12 @@ class EmojiBubble extends Entity3D
 		
 	}
 	
+	var charArray:Array<Image> = new Array<Image>();
+	
+	var tau:Float = 6.283;
+	
+	var sin:Float = 0;
+	
 	override public function update()
 	{
 		
@@ -99,17 +109,51 @@ class EmojiBubble extends Entity3D
 			if (bubble.alpha <= 0)
 			{
 				scene.remove(this);
-				MainScene.bubble = null;
+				if (number == 1) MainScene.bubble = null;
+				else MainScene.bubble2 = null;
 			}
 		}
 		
-		if ((Input.pressed(Key.SPACE) || Input.pressed(Key.E) || Input.joystick(0).pressed(1) || Input.joystick(0).pressed(2) || Input.joystick(0).pressed(3)) && index <= 10)
+		if (charArray.length < 6 && number == 1)
 		{
-			addChar();
-			counter = 3;
-			bubble.alpha = connect.alpha = 1;
-			play(HXP.rand(3));
+			if (MainScene.control1 == 0)
+			{
+				if (Input.pressed(Key.SPACE) || Input.pressed(Key.E)) newBubble();
+			}
+			else if (MainScene.control1 == 1)
+			{
+				if (Input.joystick(0).pressed(1) || Input.joystick(0).pressed(3) || Input.joystick(0).pressed(2)) newBubble();
+			}
+			else
+			{
+				if (Input.joystick(1).pressed(1) || Input.joystick(1).pressed(3) || Input.joystick(1).pressed(2)) newBubble();
+			}
 		}
+		else if (charArray.length < 6 && number == 2)
+		{
+			if (MainScene.control2 == 0)
+			{
+				if (Input.pressed(Key.SPACE) || Input.pressed(Key.E)) newBubble();
+			}
+			else if (MainScene.control2 == 1)
+			{
+				if (Input.joystick(0).pressed(1) || Input.joystick(0).pressed(3) || Input.joystick(0).pressed(2)) newBubble();
+			}
+			else
+			{
+				if (Input.joystick(1).pressed(1) || Input.joystick(1).pressed(3) || Input.joystick(1).pressed(2)) newBubble();
+			}
+		}
+		
+		
+		sin += 0.1;
+		sin %= tau;
+			
+		for (i in 0...charArray.length)
+		{
+			charArray[i].y = bubble.y - 43 + (Math.sin(sin + i) * 6);
+		}
+		
 		
 		connect.scale = bubble.scale * 5;
 		
@@ -133,30 +177,36 @@ class EmojiBubble extends Entity3D
         }
 	}
 	
+	function newBubble(e:Dynamic = null):Void
+	{
+		addChar();
+		counter = 3;
+		bubble.alpha = connect.alpha = 1;
+		play(HXP.rand(3));
+	}
+	
 	private function addChar(e:Dynamic = null):Void
 	{
 		
 		var char:String = emojiMain[HXP.rand(emojiMain.length)];
 		
-		var charSprite:Image = new Image("gfx/36x36/" + char + ".png");
+		charArray.push(new Image("gfx/36x36/" + char + ".png"));
 		
-		charSprite.centerOrigin();
+		charArray[charArray.length-1].centerOrigin();
 		
-		charSprite.x = bubble.x + (index * 40);
-		charSprite.y = bubble.y - 40;
+		charArray[charArray.length-1].x = bubble.x + (charArray.length * 40);
+		charArray[charArray.length-1].y = bubble.y - 40;
 		
-		charSprite.scale = 0;
+		charArray[charArray.length-1].scale = 0;
 		
-		addGraphic(charSprite);
+		addGraphic(charArray[charArray.length-1]);
 		
-		bubbleTween.tween(bubble, "scaleX", 0.5 + (0.5 * index), 0.4, Ease.backOut);
+		bubbleTween.tween(bubble, "scaleX", 0.5 + (0.5 * charArray.length), 0.4, Ease.backOut);
 		bubbleTween.start();
 		
 		var tweeny:VarTween = new VarTween(null, TweenType.OneShot);
-		tweeny.tween(charSprite, "scale", 1, 1, EaseElastic.elasticOut);
+		tweeny.tween(charArray[charArray.length-1], "scale", 1, 1, EaseElastic.elasticOut);
 		addTween(tweeny, true);
-		
-		index += 1;
 		
 	}
 	

@@ -165,7 +165,7 @@ class Poop extends Entity3D
 							
 							for (j in 0...eaten1)
 							{
-								MainScene.seeds.push(new Seed(p.x, p.y, p.z, true,MainScene.seeds[i].control,1));
+								MainScene.seeds.push(new Seed(p.x, p.y, p.z, true,MainScene.control1,1));
 								scene.add(MainScene.seeds[MainScene.seeds.length - 1]);
 								
 								MainScene.seeds[MainScene.seeds.length - 1].fall = true;
@@ -178,7 +178,7 @@ class Poop extends Entity3D
 							}
 							for (j in 0...eaten2)
 							{
-								MainScene.seeds.push(new Seed(p.x, p.y, p.z, true,MainScene.seeds[i].control,2));
+								MainScene.seeds.push(new Seed(p.x, p.y, p.z, true,MainScene.control2,2));
 								scene.add(MainScene.seeds[MainScene.seeds.length - 1]);
 								
 								MainScene.seeds[MainScene.seeds.length - 1].fall = true;

@@ -219,6 +219,8 @@ class Setup extends Scene
 		
 		if (player1 != -1)
 		{
+			if (!gogo)
+			{
 			if (spritey.scale == 0)
 			{
 				tweenPress.tween(spritey, "scale", 1, 0.5, EaseElastic.elasticOut);
@@ -227,17 +229,19 @@ class Setup extends Scene
 				
 			}
 			
+			
 			if (Input.joystick(0).pressed(XBOX_GAMEPAD.A_BUTTON) && (player1 == 1 || player2 == 1))
 			{
 				goStart();
 			}
-			if (Input.joystick(1).pressed(XBOX_GAMEPAD.A_BUTTON) && (player1 == 2 || player2 == 2))
+			else if (Input.joystick(1).pressed(XBOX_GAMEPAD.A_BUTTON) && (player1 == 2 || player2 == 2))
 			{
 				goStart();
 			}
-			if ((Input.pressed(Key.SPACE) || Input.pressed(Key.ENTER) || Input.pressed(Key.F)) && (player1 == 0 || player2 == 0))
+			else if ((Input.pressed(Key.SPACE) || Input.pressed(Key.ENTER) || Input.pressed(Key.F)) && (player1 == 0 || player2 == 0))
 			{
 				goStart();
+			}
 			}
 		}
 		else
