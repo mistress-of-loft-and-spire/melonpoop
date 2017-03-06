@@ -1,3 +1,4 @@
+import com.haxepunk.RenderMode;
 import com.haxepunk.debug.Console.TraceCapture;
 import com.haxepunk.Engine;
 import com.haxepunk.HXP;
@@ -7,18 +8,6 @@ import openfl.Lib;
 
 class Main extends Engine
 {
-	
-	/*
-	 * credits:
-	 * 
-	 *  Jupiter Hadley    Larua fnt
-	 * 
-	 * tweemoji   
-	 * 
-	 * 
-	 * 
-	 * 
-	 */
 
 	override public function init()
 	{
@@ -28,6 +17,8 @@ class Main extends Engine
 		trace(HXP.VERSION);
 #end
 		
+		HXP.volume = 0.1;
+		
 		HXP.screen.color = 0xcaf8f2;
 		
 		HXP.screen.smoothing = false;
@@ -36,23 +27,38 @@ class Main extends Engine
 		
 		HXP.screen.scale = 1;
 		
+		HXP.scene = new Setup();
+	}
+	
+	public static function restart():Void
+	{
+		
+		if (MainScene.music.main != null)
+		{
+			if (MainScene.music.main.playing)
+			{
+				MainScene.music.main.stop();
+			}
+		}
+		
 		HXP.scene = new MainScene();
+		
 	}
 	
 	override public function update():Void
 	{
-		
-		if (Input.pressed(Key.F5)) init();
-		
-		if (Input.pressed(Key.ESCAPE))
+#if debug
+		if (Input.pressed(Key.F5))
 		{
-#if (!flash && !html5)
-			Lib.exit();
+			restart();
+		}
 #end
+		if (Input.pressed(Key.F11) || Input.pressed(Key.F12))
+		{
+			HXP.fullscreen = !HXP.fullscreen;
 		}
 		
 		super.update();
-		
 	}
 
 	public static function main() { new Main(); }

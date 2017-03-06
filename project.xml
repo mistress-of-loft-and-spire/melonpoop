@@ -3,7 +3,7 @@
 	<meta title="🍉💩" package="" version="1.0.0" company="voec" />
 
 	<!-- output -->
- 	<app file="" main="Main" path="bin" />
+ 	<app file="melonpoop" main="Main" path="bin" />
 
 	<window fps="60" background="0xc6ffed" />
 	<window width="960" height="540" resizable="true" unless="mobile" />
@@ -18,8 +18,8 @@
 	<!-- assets -->
 	<assets path="assets/gfx" rename="gfx" include="*.png|*.jpg" />
 	<assets path="assets/sfx" rename="sfx" include="*.mp3" if="flash" />
-	<assets path="assets/sfx" rename="sfx" include="*.wav|*.ogg" unless="flash" />
-	<assets path="assets/fnt" rename="fnt" include="*.ttf|*.otf" />
+	<assets path="assets/sfx" rename="sfx" include="*.ogg" unless="flash" />
+	<!-- <assets path="assets/dat" rename="dat" include="*.xml" /> -->
 
-	<icon path="assets/HaxePunk.svg" />
+	<icon path="assets/gfx/icon.png" />
 </project>

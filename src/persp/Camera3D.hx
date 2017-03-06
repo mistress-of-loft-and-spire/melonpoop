@@ -33,7 +33,7 @@ class Camera3D extends Entity
 		super(0, 0);
 		
 		horizon_x = HXP.halfWidth;
-		horizon_y = HXP.height;
+		horizon_y = 850;
 		
 		offset.setTo( -HXP.halfWidth + x, -HXP.halfHeight - (HXP.halfHeight*0.75)+ y, z);
 		
@@ -56,6 +56,8 @@ class Camera3D extends Entity
 		//change horizon line
 		if (Input.check(Key.Z))  { horizon_y -= 2; }
 		if (Input.check(Key.H))  { horizon_y += 2; }
+		
+		//HXP.console.log([offset.x + "..." + offset.y + "..." + offset.z + "..." + horizon_y]);
 #end
 		
 	}

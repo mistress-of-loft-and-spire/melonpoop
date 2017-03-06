@@ -5,6 +5,8 @@ import com.haxepunk.Graphic;
 import com.haxepunk.HXP;
 import com.haxepunk.Mask;
 import com.haxepunk.graphics.Image;
+import com.haxepunk.masks.Grid;
+import openfl.display.BitmapData;
 import persp.Entity3D;
 
 /**
@@ -14,22 +16,34 @@ import persp.Entity3D;
 class Layer extends Entity3D
 {
 	
+	public var bitmap:BitmapData;
+	
 	var sprite:Image;
+	
+	public var grid:Grid;
 
 	public function new(x:Int = 0, y:Int = 0, z:Int = 0) 
 	{
 		
-		if 		(z == 0) 	sprite = new Image("gfx/melon_top.png");
-		else if (z == 1) 	sprite = new Image("gfx/melon_second.png");
-		else if (z == 50) 	sprite = new Image("gfx/melon_last.png");
-		else 				sprite = new Image("gfx/melon_mid.png");
+		super(x, y, z * 5);
 		
-		if (z > 10) sprite.color = HXP.colorLerp(0xffffff, 0xb7e2ae, 0.1);
-		if (z > 20) sprite.color = HXP.colorLerp(0xffffff, 0xb7e2ae, 0.2);
-		if (z > 30) sprite.color = HXP.colorLerp(0xffffff, 0xb7e2ae, 0.3);
-		if (z > 40) sprite.color = HXP.colorLerp(0xffffff, 0xb7e2ae, 0.4);
+		bitmap = new BitmapData(396, 379);
 		
-		super(x, y, z * 3);
+		if 		(z == 0) 	bitmap = HXP.getBitmap("gfx/melon_top.png").clone();
+		else if (z % 3 != 0) 	bitmap = HXP.getBitmap("gfx/melon_mid.png").clone();
+		else 				bitmap = HXP.getBitmap("gfx/melon_second.png").clone();
+		
+		sprite = new Image(bitmap);
+		/*
+		if (z > 3) sprite.color = HXP.colorLerp(0xffffff, 0xb7e2ae, 0.15);
+		if (z > 6) sprite.color = HXP.colorLerp(0xffffff, 0xb7e2ae, 0.3);
+		if (z > 9) sprite.color = HXP.colorLerp(0xffffff, 0xb7e2ae, 0.45);
+		if (z > 12) sprite.color = HXP.colorLerp(0xffffff, 0xb7e2ae, 0.6);
+		if (z > 15) sprite.color = HXP.colorLerp(0xffffff, 0xb7e2ae, 0.75);
+		if (z > 18) sprite.color = HXP.colorLerp(0xffffff, 0xb7e2ae, 0.9);
+		if (z > 21) sprite.color = HXP.colorLerp(0xffffff, 0xb7e2ae, 1);*/
+		
+		sprite.color = HXP.colorLerp(0xffffff, 0xb7e2ae, z / MainScene.maxLayer);
 		
 		sprite.centerOrigin();
 		sprite.originY = 208;
@@ -37,22 +51,29 @@ class Layer extends Entity3D
 		addGraphic(sprite);
 		
 		sprite.smooth = false;
-			
+		
+		grid = new Grid(390, 375, 15, 15);
+		grid.loadFromString(MainScene.fastXml,"","\n");
+		
+		mask = grid;
+		type = "solid";
+		
+		grid.x = -195;
+		grid.y = -210;
 	}
 	
-	function renderMelon():Void
+	override public function update():Void
 	{
 		sprite.angle = MainScene.rotationAngle;
-	}
 		
-	override public function added()
-	{
-		renderMelon();
+		if (MainScene.meanZ - 15 > p.z) sprite.alpha -= 0.01;
+		else if (sprite.alpha < 1) sprite.alpha += 0.01;
+		
+		super.update();
 	}
 	
 	override public function render():Void
 	{
-		renderMelon();
 		super.render();
 		sprite.scale = gfxScale;
 	}

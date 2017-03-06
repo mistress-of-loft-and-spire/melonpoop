@@ -44,7 +44,7 @@ class Letter extends Entity
 		
 		shadow.smooth = sprite.smooth = false;
 		
-		layer = -8;
+		layer = -108;
 		
 		super(x, y);
 		

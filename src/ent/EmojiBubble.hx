@@ -4,6 +4,7 @@ import com.haxepunk.Entity;
 import com.haxepunk.Graphic;
 import com.haxepunk.HXP;
 import com.haxepunk.Mask;
+import com.haxepunk.Sfx;
 import com.haxepunk.Tween.TweenType;
 import com.haxepunk.graphics.Canvas;
 import com.haxepunk.graphics.Image;
@@ -41,13 +42,17 @@ class EmojiBubble extends Entity3D
 	var bubble:Image = new Image("gfx/bubble_small.png");
 	var connect:Image = new Image("gfx/bubble_connect.png");
 	
-	var emojiMain:Array<String> = ["1f349", "1f4a9", "2728"];
+	var emojiMain:Array<String> = ["1f349","1f4a9","1f47b","1f47e","1f480","1f4a3","1f4a8","2764","1f4a2","1f4a5","1f4a4","1f576","1f525","2728","2b50","1f4a9","1f335","1f33b","1f339","1f331","1f347","1f348","1f34a","1f34b","1f34c","1f34d","1f34e","1f350","1f351","1f352","1f353","1f95d","1f346","1f955","1f336","1f344","1f349","1f30c","1f680","1f308","1f388","1f389","1f3c6","1f3ae","1f579","1f4af","1f41b"];
 	
 	var index:Int = 1;
 	
 	var bubbleTween:VarTween = new VarTween(null, TweenType.Persist);
 	
 	var counter:Float = 3;
+	
+	var s3:Sfx = new Sfx("sfx/talk03.ogg");
+	var s2:Sfx = new Sfx("sfx/talk02.ogg");
+	var s1:Sfx = new Sfx("sfx/talk01.ogg");
 	
 	public function new(x:Float, y:Float, z:Float) 
 	{
@@ -60,7 +65,7 @@ class EmojiBubble extends Entity3D
 		bubble.originY = bubble.height; 
 		connect.originY = connect.height;
 		
-		bubble.x = 5; bubble.y = 5;
+		bubble.x = 20; bubble.y = -35;
 		
 		connect.x = bubble.x; connect.y = bubble.y + 10;
 		
@@ -69,7 +74,7 @@ class EmojiBubble extends Entity3D
 		addGraphic(connect);
 		addGraphic(bubble);
 		
-		super(x, y, z);
+		super(x, y, z, -30, true);
 		
 		var tweenStart:VarTween = new VarTween(null, TweenType.OneShot);
 		tweenStart.tween(bubble, "scale", 0.2, 1, EaseElastic.elasticOut);
@@ -78,6 +83,8 @@ class EmojiBubble extends Entity3D
 		addTween(bubbleTween, false);
 		
 		addChar();
+		
+		play(HXP.rand(3));
 		
 	}
 	
@@ -89,20 +96,41 @@ class EmojiBubble extends Entity3D
 		if (counter <= 0)
 		{
 			bubble.alpha = connect.alpha -= 0.1;
-			if (bubble.alpha <= 0) scene.remove(this);
+			if (bubble.alpha <= 0)
+			{
+				scene.remove(this);
+				MainScene.bubble = null;
+			}
 		}
 		
-		if (Input.pressed(Key.F) && index <= 10)
+		if ((Input.pressed(Key.SPACE) || Input.pressed(Key.E) || Input.joystick(0).pressed(1) || Input.joystick(0).pressed(2) || Input.joystick(0).pressed(3)) && index <= 10)
 		{
 			addChar();
 			counter = 3;
 			bubble.alpha = connect.alpha = 1;
+			play(HXP.rand(3));
 		}
 		
 		connect.scale = bubble.scale * 5;
 		
 		super.update();
 		
+	}
+	
+	function play(num:Int)
+    {
+		if (num == 0)
+		{
+			s1.play();
+        }
+        else if (num == 1)
+		{
+			s2.play();
+        }
+        else if (num == 2)
+		{
+			s3.play();
+        }
 	}
 	
 	private function addChar(e:Dynamic = null):Void

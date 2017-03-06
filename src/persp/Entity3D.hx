@@ -19,7 +19,7 @@ class Entity3D extends Entity
 	
 	
 	
-	private var p:Vector3D = new Vector3D(0, 0, 0);
+	public var p:Vector3D = new Vector3D(0, 0, 0);
 	
 	private var depthFactor:Float = 1; //
 	private var depthInverse:Float = 1; //the inverse of your depth factor
@@ -29,15 +29,21 @@ class Entity3D extends Entity
 	private var addLayer:Int;
 	
 	private var isoFactor:Float = 0;
+	
+	private var rotate:Bool;
 
-	public function new(x:Float=0, y:Float=0, z:Float=0, addToLayer:Int=0) 
+	public function new(x:Float=0, y:Float=0, z:Float=0, addToLayer:Int=0, rotate:Bool=false) 
 	{
+		
+		this.rotate = rotate;
 		
 		super(x, y);
 		
-		addLayer = addToLayer;
+		addLayer = addToLayer + 100;
 		
-		p.setTo(x, y, z);		
+		p.setTo(x, y, z);	
+		
+		render3D();
 		
 	}
 	
@@ -49,9 +55,23 @@ class Entity3D extends Entity
 		
 		depthInverse = 1.0 - depthFactor; 
 		
-		//pos
-		y = ((p.y - Camera3D.camera.y) * depthFactor) + (Camera3D.horizon_y * depthInverse);
-		x = ((p.x - Camera3D.camera.x) * depthFactor) + (Camera3D.horizon_x * depthInverse);
+		if (rotate)
+		{
+			var targetAngle:Float = MainScene.rotationAngle * (Math.PI / -180);
+			
+			var newX:Float = (p.x * Math.cos(targetAngle)) - (p.y * Math.sin(targetAngle));
+			var newY:Float = (p.x * Math.sin(targetAngle)) + (p.y * Math.cos(targetAngle));
+			
+			//pos
+			y = ((newY - Camera3D.camera.y) * depthFactor) + (Camera3D.horizon_y * depthInverse);
+			x = ((newX - Camera3D.camera.x) * depthFactor) + (Camera3D.horizon_x * depthInverse);
+		}
+		else
+		{
+			//pos
+			y = ((p.y - Camera3D.camera.y) * depthFactor) + (Camera3D.horizon_y * depthInverse);
+			x = ((p.x - Camera3D.camera.x) * depthFactor) + (Camera3D.horizon_x * depthInverse);
+		}
 		
 		//scale
 		gfxScale = depthFactor;

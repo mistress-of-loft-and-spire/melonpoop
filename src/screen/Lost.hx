@@ -4,6 +4,7 @@ import com.haxepunk.Entity;
 import com.haxepunk.Graphic;
 import com.haxepunk.HXP;
 import com.haxepunk.Mask;
+import com.haxepunk.Sfx;
 import com.haxepunk.Tween.TweenType;
 import com.haxepunk.graphics.Canvas;
 import com.haxepunk.graphics.Image;
@@ -33,12 +34,15 @@ class Lost extends Entity
 	
 	var back:Image = new Image(new BitmapData(1, 1, false, 0xFFFFFFFF));
 	
-	var like:Image = new Image("gfx/likemelon.png");
+	var bye:Sfx = new Sfx("sfx/goodbye.ogg");
 	
 	var state:Int = 0;
 
 	public function new() 
 	{
+		
+		MainScene.music.fadeOut("main");
+		bye.play();
 		
 		// --------- ---------
 		
@@ -51,23 +55,15 @@ class Lost extends Entity
 		
 		addGraphic(back);
 		
-		// --------- poopText ---------
-		
-		like.centerOrigin();
-		
-		like.visible = false;
-		
-		addGraphic(like);
-		
 		// --------- ---------
 		
-		layer = -10;
+		layer = -110;
 		
 		super(HXP.halfWidth, HXP.halfHeight);
 		
 		tright();
 		
-		HXP.alarm(2, show1, TweenType.OneShot);
+		HXP.alarm(1.5, show1, TweenType.OneShot);
 		
 		var tweeny:VarTween = new VarTween(null, TweenType.Persist);
 		tweeny.tween(back, "alpha", 0.3, 2);
@@ -83,11 +79,11 @@ class Lost extends Entity
 			var tempY:Int = 0;
 			
 			if 		(i == 1 || i == 13) tempY = 18;
-			else if (i == 2 || i == 12) tempY = 32;
-			else if (i == 3 || i == 11) tempY = 38;
-			else if (i == 4 || i == 10) tempY = 43;
-			else if (i == 5 || i == 9)  tempY = 46;
-			else if (i == 6 || i == 8 || i == 7)  tempY = 48;
+			else if (i == 2 || i == 12) tempY = 36;
+			else if (i == 3 || i == 11) tempY = 42;
+			else if (i == 4 || i == 10) tempY = 49;
+			else if (i == 5 || i == 9)  tempY = 54;
+			else if (i == 6 || i == 8 || i == 7)  tempY = 58;
 			
 			letterArray.push(new Letter(letterText.charAt(i), x - 280 + (i*40), y - 100 - tempY, -i*2));
 			
@@ -106,7 +102,7 @@ class Lost extends Entity
 		// --------- ---------
 		
 		youlost.centerOrigin(); youlostShadow.centerOrigin();
-		youlost.y = youlostShadow.y = -70; 
+		youlost.y = youlostShadow.y = -40; 
 		
 		youlostShadow.x += 3; youlostShadow.y += 3;
 		
@@ -118,21 +114,10 @@ class Lost extends Entity
 		addGraphic(youlostShadow);
 		addGraphic(youlost);
 		
-		// --------- SCORE ---------
-		
-		scene.add(new ScoreBubble(HXP.halfWidth-50, HXP.halfHeight+30));
-		
 	}
 	
 	override public function update()
 	{
-		
-		if (Input.joystick(0).check(XBOX_GAMEPAD.START_BUTTON))
-		{
-			state += 1;
-			
-			HXP.screen.color = HXP.choose([0xfce4eb, 0xfce4f9, 0xeae4fc, 0xe4f3fc, 0xe4fcf3, 0xeafce4, 0xfcf7e4]);
-		}
 		
 		youlostShadow.angle = youlost.angle;
 		youlostShadow.scale = youlost.scale;
@@ -144,21 +129,19 @@ class Lost extends Entity
 	function show1(e:Dynamic = null):Void
 	{
 		
-		var tweeny:VarTween = new VarTween(null, TweenType.Persist);
-		tweeny.tween(youlost, "scale", 1, 0.5, EaseElastic.elasticOut);
+		MainScene.music.play(MainScene.music.ending);
+		var tweeny:VarTween = new VarTween(show2, TweenType.Persist);
+		tweeny.tween(youlost, "scale", 1, 1, EaseElastic.elasticOut);
 		addTween(tweeny, true);
 		
 		//HXP.alarm(2, show1, TweenType.OneShot);
 		
 	}
 	
-	function showPoop(e:Dynamic = null):Void
-	{
-		
-		back.alpha = 1;
-		
-		like.visible = true;
-		
+	function show2(e:Dynamic = null):Void
+    {
+		scene.add(new ScoreBubble(HXP.halfWidth, HXP.halfHeight + 170));
+		scene.add(new Endsnake());
 	}
 	
 	private function tright(e:Dynamic = null):Void

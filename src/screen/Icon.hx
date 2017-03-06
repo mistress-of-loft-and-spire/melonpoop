@@ -37,6 +37,8 @@ class Icon extends Entity
 		
 		sprite.centerOrigin();
 		
+		layer = -105;
+		
 		sprite.smooth = false;
 		
 		if (enableShadow)
@@ -49,15 +51,36 @@ class Icon extends Entity
 			
 			shadow.centerOrigin();
 			
-			shadow.x = shadow.y = 4;
+			shadow.x = shadow.y = 8;
 			
 			shadow.smooth = false;
 			
 			addGraphic(shadow);
+			
+			var tweeny:VarTween = new VarTween(null, TweenType.OneShot);
+			tweeny.tween(sprite,"scale",1,2,EaseElastic.elasticOut);
+			addTween(tweeny,true);
 		}
 		else
 		{
 			sprite.scale = 0.5;
+			
+			if (icon == "melon")
+			{
+				sprite.x -= 80;
+				
+				var rr:VarTween = new VarTween(null, TweenType.Persist);
+				rr.tween(sprite,"x",sprite.x + 80,1.5,Ease.backInOut);
+				addTween(rr,true);
+            }
+            else
+			{
+				sprite.x += 80;
+				
+				var rr1:VarTween = new VarTween(null, TweenType.Persist);
+				rr1.tween(sprite,"x",sprite.x - 80,1.5,Ease.backInOut);
+				addTween(rr1,true);
+            }
 		}
 		
 		addGraphic(sprite);
@@ -70,7 +93,11 @@ class Icon extends Entity
 	
 	override public function update()
 	{
-		if (enableShadow) shadow.angle = sprite.angle;
+		if (enableShadow)
+		{
+			shadow.angle = sprite.angle;
+			shadow.scale = sprite.scale;
+        }
 		else
 		{
 			
@@ -89,6 +116,18 @@ class Icon extends Entity
 		
 		super.update();
 		
+	}
+	
+	public function delete(e:Dynamic = null):Void
+    {
+		var tween2:VarTween = new VarTween(fin,TweenType.OneShot);
+		tween2.tween(sprite,"scale",0,0.8,Ease.expoIn);
+		addTween(tween2,true);
+	}
+
+	private function fin(e:Dynamic = null):Void
+    {
+		scene.remove(this);
 	}
 	
 	private function tright(e:Dynamic = null):Void
