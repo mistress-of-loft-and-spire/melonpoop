@@ -45,8 +45,8 @@ class Poop extends Entity3D
 		sprite.centerOrigin();
 		sprite.originY = 43;
 		
-		if (eaten1 >= 3) sprite.frame= 2;
-        else if (eaten1 >= 1) sprite.frame= 1;
+		if (eaten1 + eaten2 >= 3) sprite.frame= 2;
+        else if (eaten1 + eaten2 >= 1) sprite.frame= 1;
         else sprite.frame= 0;
         
 		sprite.flipped = HXP.choose([true, false]);

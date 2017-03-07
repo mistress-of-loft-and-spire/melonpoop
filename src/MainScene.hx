@@ -295,8 +295,8 @@ class MainScene extends Scene
 		angleChange *= 0.8;
 		manualChange *= 0.8;
 		
-		HXP.clamp(angleChange, -0.6, 0.6);
-		HXP.clamp(manualChange, -0.3, 0.3);
+		angleChange = HXP.clamp(angleChange, -0.8, 0.8);
+		manualChange = HXP.clamp(manualChange, -0.3, 0.3);
 		
 		if (Math.abs(angleChange) < 0.04) { angleChange = 0; }
 		
@@ -336,7 +336,7 @@ class MainScene extends Scene
 			var axisLX:Float = Input.joystick(0).getAxis(0);
 			
 			angleChange += 0.2 * axisRX;
-			manualChange += 0.05 * axisLX;
+			manualChange -= 0.05 * axisLX;
 			camZoom = camZoom - (0.01 * axisRY);
 		}
 		if (control1 == 2 || control2 == 2)
@@ -350,7 +350,7 @@ class MainScene extends Scene
 			var axisLX2:Float = Input.joystick(1).getAxis(0);
 			
 			angleChange += 0.2 * axisRX2;
-			manualChange += 0.05 * axisLX2;
+			manualChange -= 0.05 * axisLX2;
 			camZoom = camZoom - (0.02 * axisRY2);
 		}
 		
